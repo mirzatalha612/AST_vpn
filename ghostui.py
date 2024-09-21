@@ -13,8 +13,8 @@ if int(os.getuid()) != 0:
     print("[bold white on red]You need root permissions to use this tool!!")
     sys.exit(1)
 
-# Checking CyberGhostVPN existence
-if os.path.exists("/usr/bin/cyberghostvpn") is False:
+# Checking ASTVPN existence (update path based on the correct binary location)
+if os.path.exists("/usr/bin/astvpn") is False:
     print("[bold white on red]ASTVPN seems not installed on this system!!")
     sys.exit(1)
 
@@ -76,6 +76,7 @@ class MainForm(npyscreen.FormBaseNew):
             sys.exit(0)
         else:
             pass
+
     def MakeConnection(self):
         try:
             target_country = str(self.get_country.values[self.get_country.value].replace('\n', ''))
@@ -94,8 +95,9 @@ class MainForm(npyscreen.FormBaseNew):
                 f"IP Address: {api_data['query']}\nCountry: {api_data['country']}\nRegion: {api_data['regionName']}\nISP: {api_data['isp']}",
                 "NOTIFICATION"
             )
-        except:
-            pass
+        except Exception as e:
+            print(f"Error: {str(e)}")
+
     def StopConnect(self):
         try:
             stops = npyscreen.notify_yes_no(
@@ -106,7 +108,7 @@ class MainForm(npyscreen.FormBaseNew):
                 npyscreen.notify_wait(
                     "Disabling VPN connection please wait...", "PROGRESS"
                 )
-                stop_conn = ["AST VPN", "--stop"]
+                stop_conn = ["ASTVPN", "--stop"]  # Fixed typo, removed space
                 comm = Popen(stop_conn, stderr=PIPE, stdout=PIPE)
                 comm.wait()
                 npyscreen.notify_confirm(
@@ -114,17 +116,21 @@ class MainForm(npyscreen.FormBaseNew):
                 )
             else:
                 pass
-        except:
-            pass
+        except Exception as e:
+            print(f"Error: {str(e)}")
+
     def AuthInfo(self):
-        auth_conf = configparser.ConfigParser()
-        username = os.getenv("SUDO_USER")
-        auth_conf.read(f"/home/{username}/.cyberghost/config.ini")
-        npyscreen.notify_confirm(
-            f"User: {auth_conf['account']['username']}",
-            "INFO"
-        )
-    
+        try:
+            auth_conf = configparser.ConfigParser()
+            username = os.getenv("SUDO_USER")
+            auth_conf.read(f"/home/{username}/.cyberghost/config.ini")
+            npyscreen.notify_confirm(
+                f"User: {auth_conf['account']['username']}",
+                "INFO"
+            )
+        except Exception as e:
+            print(f"Error: {str(e)}")
+
     def GetIPInfo(self):
         try:
             npyscreen.notify_wait(
@@ -136,8 +142,8 @@ class MainForm(npyscreen.FormBaseNew):
                 f"IP Address: {api_data['query']}\nCountry: {api_data['country']}\nRegion: {api_data['regionName']}\nISP: {api_data['isp']}",
                 "NOTIFICATION"
             )
-        except:
-            pass
+        except Exception as e:
+            print(f"Error: {str(e)}")
 
 # Class for main application
 class MainApp(npyscreen.NPSAppManaged):
