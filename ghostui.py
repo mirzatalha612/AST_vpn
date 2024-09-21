@@ -14,7 +14,7 @@ if int(os.getuid()) != 0:
     sys.exit(1)
 
 # Checking ASTVPN existence (update path based on the correct binary location)
-if os.path.exists("/usr/bin/astvpn") is False:
+if os.path.exists() is False:
     print("[bold white on red]ASTVPN seems not installed on this system!!")
     sys.exit(1)
 
